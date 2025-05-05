@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  log_date: 2025-05-02
+  breakfast_details: MyText
+  breakfast_calories: 1
+  lunch_details: MyText
+  lunch_calories: 1
+  snack_details: MyText
+  snack_calories: 1
+  dinner_details: MyText
+  dinner_calories: 1
+
+two:
+  user: two
+  log_date: 2025-05-02
+  breakfast_details: MyText
+  breakfast_calories: 1
+  lunch_details: MyText
+  lunch_calories: 1
+  snack_details: MyText
+  snack_calories: 1
+  dinner_details: MyText
+  dinner_calories: 1
