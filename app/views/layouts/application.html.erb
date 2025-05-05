@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Seu Planejador Alimentar</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+
+<body>
+
+<%# Contêiner para mensagens flutuantes %>
+<div id="flash-messages-container">
+  <% flash.each do |type, msg| %>
+    <%# Adiciona classes para estilização e tipo de mensagem %>
+    <div class="flash-message flash-message-<%= type %>">
+      <%= msg %>
+      <%# Opcional: Botão para fechar a mensagem %>
+      <span class="close-btn">&times;</span>
+    </div>
+  <% end %>
+</div>
+
+<%= yield %>
+</body>
+</html>

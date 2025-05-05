@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Alimentação Diária</title>
+  <style>
+      body {
+          font-family: sans-serif;
+          background-color: #f4f4f4;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start; /* Alinha o conteúdo ao topo */
+          min-height: 100vh; /* Garante que o body tenha pelo menos a altura da tela */
+          margin: 0;
+          padding: 20px 0; /* Adiciona um pouco de padding no topo e base */
+      }
+
+      /* Estilo do contêiner principal do formulário */
+      .daily-food-log-form {
+          background-color: #fff;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          width: 90%;
+          max-width: 500px; /* Largura máxima ajustada conforme pedido anteriormente */
+          margin: 20px auto; /* Centraliza o bloco */
+      }
+
+      .daily-food-log-form h2 { /* Estilo para o título de erros */
+          color: #333;
+          margin-bottom: 20px;
+          text-align: center;
+      }
+
+      .form-section h3 {
+          color: #333;
+          margin-top: 25px;
+          margin-bottom: 15px;
+          border-bottom: 1px solid #eee;
+          padding-bottom: 5px;
+      }
+
+      .error-messages {
+          background-color: #fdd;
+          border: 1px solid #f00;
+          color: #f00;
+          padding: 10px;
+          margin-bottom: 20px;
+          border-radius: 4px;
+          text-align: left;
+      }
+      .error-messages h2 {
+          color: #f00;
+          margin-top: 0;
+          margin-bottom: 10px;
+          font-size: 1.2em;
+      }
+      .error-messages ul {
+          margin: 0;
+          padding-left: 20px;
+      }
+
+      .field {
+          margin-bottom: 15px;
+          text-align: left;
+      }
+
+      .form-label {
+          display: block;
+          margin-bottom: 5px;
+          color: #555;
+          font-weight: bold;
+      }
+
+      .form-input,
+      .form-text-area {
+          width: calc(100% - 16px); /* 100% menos padding */
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+          font-size: 1rem;
+      }
+
+      .form-text-area {
+          resize: vertical;
+      }
+
+      .form-submit-button {
+          background-color: #007bff;
+          color: white;
+          padding: 12px 24px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 18px;
+          width: auto;
+          margin-top: 20px;
+          display: inline-block;
+      }
+
+      .form-submit-button:hover {
+          background-color: #0056b3;
+      }
+
+      .form-actions {
+          margin-top: 30px;
+          text-align: right;
+      }
+
+      .section-divider {
+          border: none;
+          height: 1px;
+          background-color: #ddd;
+          margin: 30px 0;
+      }
+
+      /* ============================================= */
+      /* NOVOS ESTILOS PARA COLOCAR SELECTS LADO A LADO */
+      /* ============================================= */
+      .suggestion-selects-container {
+          display: flex; /* Ativa o layout flexbox */
+          gap: 15px; /* Espaço entre os itens flexíveis (os .field) */
+          flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo em telas menores */
+          margin-bottom: 15px; /* Espaço abaixo do contêiner dos selects */
+      }
+
+      .suggestion-selects-container .field {
+          flex: 1; /* Cada .field ocupa uma porção igual do espaço disponível */
+          margin-bottom: 0; /* Remove a margem inferior dos campos individuais quando estão em flex */
+          min-width: 180px; /* Opcional: Define uma largura mínima para evitar que fiquem muito estreitos */
+      }
+
+      /* Garante que o select dentro do field flex ocupe a largura total do seu contêiner pai (o .field flex) */
+      .suggestion-selects-container .field .form-input {
+          width: 100%;
+          /* box-sizing: border-box; já definido no .form-input geral */
+      }
+
+      /* Estilo para os campos de sugestão (os que contêm os selects) */
+      /* Ajuste o padding/margin se necessário para o layout lado a lado */
+      .food-suggestion-field,
+      .meal-suggestion-field {
+          padding: 10px; /* Mantido o padding para a borda tracejada */
+          background-color: #f9f9f9;
+          border: 1px dashed #eee;
+          border-radius: 4px;
+          /* margin-bottom pode ser removido ou ajustado aqui se a margem do contêiner
+             .suggestion-selects-container for suficiente */
+      }
+
+      /* Estilo para o label dentro dos campos de sugestão */
+      .food-suggestion-field .form-label,
+      .meal-suggestion-field .form-label {
+          font-weight: normal;
+          color: #666;
+          margin-bottom: 8px;
+      }
+      /* ============================================= */
+      /* FIM NOVOS ESTILOS */
+      /* ============================================= */
+
+
+      /* Remove a margem inferior do último campo dentro de uma seção para evitar espaço duplicado */
+      .form-section .field:last-child {
+          margin-bottom: 0;
+      }
+      /* Adiciona margem inferior ao contêiner da seção */
+      .form-section {
+          margin-bottom: 20px;
+      }
+
+
+  </style>
+</head>
+<body>
+
+<div class="daily-food-log-form">
+  <%#
+      Este partial _form.html.erb será usado para criar (new) e editar (edit)
+      registros de alimentação diária. Ele espera que a variável @daily_food_log
+      esteja definida no controller.
+  %>
+
+  <%= form_with(model: @daily_food_log, local: true, class: "daily-food-log-form-inner") do |form| %>
+    <%# Usei daily-food-log-form-inner aqui para não aplicar os estilos de contêiner (padding, shadow etc) no form_with gerado %>
+
+    <% if @daily_food_log.errors.any? %>
+      <div id="error_explanation" class="error-messages">
+        <h2><%= pluralize(@daily_food_log.errors.count, "erro") %> impediram este registro de ser salvo:</h2>
+        <ul>
+          <% @daily_food_log.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-section">
+      <div class="field">
+        <%= form.label :log_date, "Data", class: "form-label" %>
+        <%= form.date_field :log_date, class: "form-input" %>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Café da Manhã</h3>
+      <div class="suggestion-selects-container">
+        <%# Select para Alimentos Avulsos %>
+        <div class="field food-suggestion-field">
+          <label for="breakfast_food_suggestion" class="form-label">Sugestão de Alimento Avulso:</label>
+          <%= select_tag "breakfast_food_suggestion", options_for_select([
+                                                                           ['-- Selecione um alimento --', '', data: { calories: 0, details: '' }], # Opção padrão para limpar
+                                                                           ['Ovos Mexidos (2 grandes)', '', data: { calories: 155, details: 'Ovos Mexidos (2 grandes)' }],
+                                                                           ['Iogurte Natural Integral (1 pote 170g)', '', data: { calories: 100, details: 'Iogurte Natural Integral (1 pote 170g)' }],
+                                                                           ['Pão Integral (1 fatia)', '', data: { calories: 80, details: 'Pão Integral (1 fatia)' }],
+                                                                           ['Queijo Minas Frescal (30g)', '', data: { calories: 70, details: 'Queijo Minas Frescal (30g)' }],
+                                                                           ['Mamão Papaya (1/2 unidade)', '', data: { calories: 60, details: 'Mamão Papaya (1/2 unidade)' }],
+                                                                           ['Banana Prata (1 unidade)', '', data: { calories: 105, details: 'Banana Prata (1 unidade)' }],
+                                                                           ['Aveia em flocos (2 col. sopa)', '', data: { calories: 75, details: 'Aveia em flocos (2 col. sopa)' }],
+                                                                           ['Café com Leite Integral (200ml)', '', data: { calories: 120, details: 'Café com Leite Integral (200ml)' }],
+                                                                           ['Tapioca (1 unidade)', '', data: { calories: 80, details: 'Tapioca (1 unidade)' }],
+                                                                           ['Suco de Laranja Natural (200ml)', '', data: { calories: 90, details: 'Suco de Laranja Natural (200ml)' }]
+                                                                         ]), class: "form-input", data: { target_calories_id: "breakfast_calories_input", target_details_id: "breakfast_details_textarea", related_select_id: "breakfast_meal_suggestion" } %>
+        </div>
+        <%# Select para Refeições Completas %>
+        <div class="field meal-suggestion-field">
+          <label for="breakfast_meal_suggestion" class="form-label">Sugestão de Refeição Completa:</label>
+          <%= select_tag "breakfast_meal_suggestion", options_for_select([
+                                                                           ['-- Selecione uma Refeição Completa --', '', data: { calories: 0, details: '' }], # Opção padrão
+                                                                           ['Café Clássico (Ovos + Pão + Café c/ Leite)', '', data: { calories: 355, details: 'Ovos Mexidos (2 grandes), Pão Integral (1 fatia), Café com Leite Integral (200ml)' }],
+                                                                           ['Café Light (Iogurte + Mamão + Granola)', '', data: { calories: 290, details: 'Iogurte Natural Integral (1 pote 170g), Mamão Papaya (1/2 unidade), Granola (30g)' }],
+                                                                           ['Café Rápido (Banana + Pão Integral)', '', data: { calories: 185, details: 'Banana Prata (1 unidade), Pão Integral (1 fatia)' }],
+                                                                           ['Café Proteinado (Ovos + Queijo Minas)', '', data: { calories: 225, details: 'Ovos Mexidos (2 grandes), Queijo Minas Frescal (30g)' }],
+                                                                           ['Tapioca com Queijo e Café', '', data: { calories: 270, details: 'Tapioca (1 unidade média com queijo 30g), Café com Leite (200ml)' }]
+                                                                         ]), class: "form-input", data: { target_calories_id: "breakfast_calories_input", target_details_id: "breakfast_details_textarea", related_select_id: "breakfast_food_suggestion" } %>
+        </div>
+      </div><div class="field">
+      <%= form.label :breakfast_details, "Alimentos (detalhes)", class: "form-label" %>
+      <%= form.text_area :breakfast_details, rows: 3, class: "form-text-area", id: "breakfast_details_textarea" %>
+    </div>
+      <div class="field">
+        <%= form.label :breakfast_calories, "Calorias", class: "form-label" %>
+        <%= form.number_field :breakfast_calories, class: "form-input", id: "breakfast_calories_input" %>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="form-section">
+      <h3>Almoço</h3>
+      <div class="suggestion-selects-container">
+        <%# Select para Alimentos Avulsos %>
+        <div class="field food-suggestion-field">
+          <label for="lunch_food_suggestion" class="form-label">Sugestão de Alimento Avulso:</label>
+          <%= select_tag "lunch_food_suggestion", options_for_select([
+                                                                       ['-- Selecione um alimento --', '', data: { calories: 0, details: '' }], # Opção padrão para limpar
+                                                                       ['Filé de Frango Grelhado (100g)', '', data: { calories: 165, details: 'Filé de Frango Grelhado (100g)' }],
+                                                                       ['Carne Bovina Magra Grelhada (100g)', '', data: { calories: 180, details: 'Carne Bovina Magra Grelhada (100g)' }],
+                                                                       ['Salmão Grelhado (100g)', '', data: { calories: 200, details: 'Salmão Grelhado (100g)' }],
+                                                                       ['Arroz Branco Cozido (100g)', '', data: { calories: 130, details: 'Arroz Branco Cozido (100g)' }],
+                                                                       ['Arroz Integral Cozido (100g)', '', data: { calories: 112, details: 'Arroz Integral Cozido (100g)' }],
+                                                                       ['Feijão Carioca Cozido (100g)', '', data: { calories: 76, details: 'Feijão Carioca Cozido (100g)' }],
+                                                                       ['Lentilha Cozida (100g)', '', data: { calories: 116, details: 'Lentilha Cozida (100g)' }],
+                                                                       ['Macarrão Cozido (100g)', '', data: { calories: 131, details: 'Macarrão Cozido (100g)' }],
+                                                                       ['Batata Doce Cozida (100g)', '', data: { calories: 86, details: 'Batata Doce Cozida (100g)' }],
+                                                                       ['Salada de Folhas (porção)', '', data: { calories: 30, details: 'Salada de Folhas' }]
+                                                                     ]), class: "form-input", data: { target_calories_id: "lunch_calories_input", target_details_id: "lunch_details_textarea", related_select_id: "lunch_meal_suggestion" } %>
+        </div>
+        <%# Select para Refeições Completas %>
+        <div class="field meal-suggestion-field">
+          <label for="lunch_meal_suggestion" class="form-label">Sugestão de Refeição Completa:</label>
+          <%= select_tag "lunch_meal_suggestion", options_for_select([
+                                                                       ['-- Selecione uma Refeição Completa --', '', data: { calories: 0, details: '' }], # Opção padrão
+                                                                       ['Almoço Fit (Frango + Arroz Integral + Feijão + Salada)', '', data: { calories: 383, details: 'Filé de Frango Grelhado (100g), Arroz Integral Cozido (100g), Feijão Carioca Cozido (100g), Salada de Folhas' }],
+                                                                       ['Almoço com Carne (Carne + Arroz + Feijão + Couve)', '', data: { calories: 446, details: 'Carne Bovina Magra Grelhada (100g), Arroz Branco Cozido (100g), Feijão Carioca Cozido (100g), Couve Refogada (100g)' }],
+                                                                       ['Almoço Leve (Salmão + Purê Batata Doce + Brócolis)', '', data: { calories: 345, details: 'Salmão Grelhado (100g), Purê de Batata Doce (100g), Brócolis Cozido (100g)' }],
+                                                                       ['Almoço Vegetariano (Lentilha + Arroz Integral + Legumes)', '', data: { calories: 308, details: 'Lentilha Cozida (100g), Arroz Integral Cozido (100g), Legumes Salteados (100g)' }],
+                                                                       ['Almoço Rápido (Bife Acebolado + Farofa)', '', data: { calories: 370, details: 'Bife Acebolado (100g, estimado), Farofa Pronta (30g)' }]
+                                                                     ]), class: "form-input", data: { target_calories_id: "lunch_calories_input", target_details_id: "lunch_details_textarea", related_select_id: "lunch_food_suggestion" } %>
+        </div>
+      </div><div class="field">
+      <%= form.label :lunch_details, "Alimentos (detalhes)", class: "form-label" %>
+      <%= form.text_area :lunch_details, rows: 3, class: "form-text-area", id: "lunch_details_textarea" %>
+    </div>
+      <div class="field">
+        <%= form.label :lunch_calories, "Calorias", class: "form-label" %>
+        <%= form.number_field :lunch_calories, class: "form-input", id: "lunch_calories_input" %>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="form-section">
+      <h3>Lanche da Tarde</h3>
+      <div class="suggestion-selects-container">
+        <%# Select para Alimentos Avulsos %>
+        <div class="field food-suggestion-field">
+          <label for="snack_food_suggestion" class="form-label">Sugestão de Alimento Avulso:</label>
+          <%= select_tag "snack_food_suggestion", options_for_select([
+                                                                       ['-- Selecione um alimento --', '', data: { calories: 0, details: '' }], # Opção padrão para limpar
+                                                                       ['Maçã (1 média)', '', data: { calories: 95, details: 'Maçã (1 média)' }],
+                                                                       ['Pera (1 média)', '', data: { calories: 100, details: 'Pera (1 média)' }],
+                                                                       ['Banana Prata (1 unidade)', '', data: { calories: 105, details: 'Banana Prata (1 unidade)' }],
+                                                                       ['Castanha de Caju (30g)', '', data: { calories: 180, details: 'Castanha de Caju (30g)' }],
+                                                                       ['Amendoim (30g)', '', data: { calories: 170, details: 'Amendoim (30g)' }],
+                                                                       ['Iogurte Natural Desnatado (1 pote 170g)', '', data: { calories: 60, details: 'Iogurte Natural Desnatado (1 pote 170g)' }],
+                                                                       ['Queijo Cottage (100g)', '', data: { calories: 82, details: 'Queijo Cottage (100g)' }],
+                                                                       ['Bolacha de Arroz (2 unidades)', '', data: { calories: 70, details: 'Bolacha de Arroz (2 unidades)' }],
+                                                                       ['Palito de Cenoura/Pepino (porção)', '', data: { calories: 30, details: 'Palito de Cenoura/Pepino (porção)' }],
+                                                                       ['Uvas (100g)', '', data: { calories: 69, details: 'Uvas (100g)' }]
+                                                                     ]), class: "form-input", data: { target_calories_id: "snack_calories_input", target_details_id: "snack_details_textarea", related_select_id: "snack_meal_suggestion" } %>
+        </div>
+        <%# Select para Refeições Completas %>
+        <div class="field meal-suggestion-field">
+          <label for="snack_meal_suggestion" class="form-label">Sugestão de Refeição Completa:</label>
+          <%= select_tag "snack_meal_suggestion", options_for_select([
+                                                                       ['-- Selecione uma Refeição Completa --', '', data: { calories: 0, details: '' }], # Opção padrão
+                                                                       ['Fruta e Iogurte', '', data: { calories: 155, details: 'Maçã (1 média), Iogurte Natural Desnatado (1 pote 170g)' }],
+                                                                       ['Lanche Seco (Castanha + Bolacha)', '', data: { calories: 250, details: 'Castanha de Caju (30g), Bolacha de Arroz (2 unidades)' }],
+                                                                       ['Sanduíche Leve (Torrada + Queijo Cottage)', '', data: { calories: 172, details: 'Torrada Integral (2 unidades), Queijo Cottage (100g)' }],
+                                                                       ['Smoothie e Palito de Cenoura', '', data: { calories: 150, details: 'Smoothie de Frutas (200ml, estimado), Palito de Cenoura/Pepino (porção)' }],
+                                                                       ['Amendoim e Pêssego', '', data: { calories: 230, details: 'Amendoim (30g), Pêssego (1 médio)' }]
+                                                                     ]), class: "form-input", data: { target_calories_id: "snack_calories_input", target_details_id: "snack_details_textarea", related_select_id: "snack_food_suggestion" } %>
+        </div>
+      </div><div class="field">
+      <%= form.label :snack_details, "Alimentos (detalhes)", class: "form-label" %>
+      <%= form.text_area :snack_details, rows: 3, class: "form-text-area", id: "snack_details_textarea" %>
+    </div>
+      <div class="field">
+        <%= form.label :snack_calories, "Calorias", class: "form-label" %>
+        <%= form.number_field :snack_calories, class: "form-input", id: "snack_calories_input" %>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="form-section">
+      <h3>Janta</h3>
+      <div class="suggestion-selects-container">
+        <%# Select para Alimentos Avulsos %>
+        <div class="field food-suggestion-field">
+          <label for="dinner_food_suggestion" class="form-label">Sugestão de Alimento Avulso:</label>
+          <%= select_tag "dinner_food_suggestion", options_for_select([
+                                                                        ['-- Selecione um alimento --', '', data: { calories: 0, details: '' }], # Opção padrão para limpar
+                                                                        ['Sopa de Legumes (porção)', '', data: { calories: 150, details: 'Sopa de Legumes (1 prato fundo, estimado)' }],
+                                                                        ['Omelete (2 ovos base)', '', data: { calories: 140, details: 'Omelete (2 ovos base)' }],
+                                                                        ['Tapioca (1 unidade)', '', data: { calories: 80, details: 'Tapioca (1 unidade)' }],
+                                                                        ['Frango Desfiado (100g)', '', data: { calories: 165, details: 'Frango Desfiado (100g)' }],
+                                                                        ['Peixe Grelhado (100g)', '', data: { calories: 180, details: 'Peixe Grelhado (100g, estimado)' }],
+                                                                        ['Purê de Batata Doce (100g)', '', data: { calories: 90, details: 'Purê de Batata Doce (100g)' }],
+                                                                        ['Quinoa Cozida (100g)', '', data: { calories: 120, details: 'Quinoa Cozida (100g)' }],
+                                                                        ['Legumes Salteados (100g)', '', data: { calories: 80, details: 'Legumes Salteados (100g, estimado)' }],
+                                                                        ['Carne Moída Magra (100g)', '', data: { calories: 170, details: 'Carne Moída Magra (100g)' }],
+                                                                        ['Ovo Cozido (1 unidade)', '', data: { calories: 70, details: 'Ovo Cozido (1 unidade)' }]
+                                                                      ]), class: "form-input", data: { target_calories_id: "dinner_calories_input", target_details_id: "dinner_details_textarea", related_select_id: "dinner_meal_suggestion" } %>
+        </div>
+        <%# Select para Refeições Completas %>
+        <div class="field meal-suggestion-field">
+          <label for="dinner_meal_suggestion" class="form-label">Sugestão de Refeição Completa:</label>
+          <%= select_tag "dinner_meal_suggestion", options_for_select([
+                                                                        ['-- Selecione uma Refeição Completa --', '', data: { calories: 0, details: '' }], # Opção padrão
+                                                                        ['Sopa e Ovo Cozido', '', data: { calories: 220, details: 'Sopa de Legumes (1 prato fundo, estimado), Ovo Cozido (1 unidade)' }],
+                                                                        ['Tapioca e Omelete', '', data: { calories: 380, details: 'Tapioca (1 unidade com queijo 30g), Omelete (2 ovos com legumes)' }],
+                                                                        ['Janta Completa (Frango + Quinoa + Legumes)', '', data: { calories: 325, details: 'Frango Desfiado (100g), Quinoa Cozida (100g), Legumes Salteados (100g, estimado)' }],
+                                                                        ['Peixe e Purê', '', data: { calories: 270, details: 'Peixe Grelhado (100g, estimado), Purê de Batata Doce (100g)' }],
+                                                                        ['Janta Rápida (Carne Moída + Abobrinha)', '', data: { calories: 210, details: 'Carne Moída Magra (100g), Abobrinha Refogada (100g)' }]
+                                                                      ]), class: "form-input", data: { target_calories_id: "dinner_calories_input", target_details_id: "dinner_details_textarea", related_select_id: "dinner_food_suggestion" } %>
+        </div>
+      </div><div class="field">
+      <%= form.label :dinner_details, "Alimentos (detalhes)", class: "form-label" %>
+      <%= form.text_area :dinner_details, rows: 3, class: "form-text-area", id: "dinner_details_textarea" %>
+    </div>
+      <div class="field">
+        <%= form.label :dinner_calories, "Calorias", class: "form-label" %>
+        <%= form.number_field :dinner_calories, class: "form-input", id: "dinner_calories_input" %>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="actions form-actions">
+      <%= form.submit (@daily_food_log.new_record? ? 'Criar Registro' : 'Atualizar Registro'), class: "form-submit-button" %>
+    </div>
+  <% end %>
+
+  <%#========================================%>
+  <%# Script JavaScript para preencher detalhes e calorias %>
+  <%#========================================%>
+  <script>
+      // Função para atualizar os campos de calorias e detalhes
+      function updateMealFields(selectElement) {
+          const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+          // Pega os dados da opção selecionada
+          const calories = parseInt(selectedOption.dataset.calories, 10);
+          const details = selectedOption.dataset.details || ''; // Garante que 'details' não seja undefined
+
+          // Encontra os IDs dos campos alvo a partir dos atributos 'data-target' do select
+          const targetCaloriesInputId = selectElement.dataset.targetCaloriesId;
+          const targetDetailsTextareaId = selectElement.dataset.targetDetailsId;
+
+          const targetCaloriesInput = document.getElementById(targetCaloriesInputId);
+          const targetDetailsTextarea = document.getElementById(targetDetailsTextareaId);
+
+          // Atualiza o campo de calorias
+          if (targetCaloriesInput) {
+              if (!isNaN(calories)) {
+                  targetCaloriesInput.value = calories;
+              } else {
+                  targetCaloriesInput.value = 0; // Define como 0 se não for um número válido
+              }
+          }
+
+          // Atualiza o campo de detalhes
+          if (targetDetailsTextarea) {
+              targetDetailsTextarea.value = details; // Sempre substitui o conteúdo
+          }
+      }
+
+      // Adiciona "ouvintes" de evento a TODOS os campos de sugestão (avulsos e completos)
+      document.querySelectorAll('.food-suggestion-field select, .meal-suggestion-field select').forEach(selectElement => {
+
+          selectElement.addEventListener('change', function() {
+              // Obtém o ID do select relacionado (o outro select na mesma seção)
+              const relatedSelectId = this.dataset.relatedSelectId;
+              const relatedSelect = document.getElementById(relatedSelectId);
+
+              // Limpa a seleção do select relacionado (se existir)
+              if (relatedSelect) {
+                  relatedSelect.selectedIndex = 0; // Seleciona a primeira opção (-- Selecione...)
+                  // O updateMealFields para o select relacionado será chamado implicitamente se ele já tiver um listener.
+                  // No entanto, para garantir que os campos alvos (calorias/detalhes) reflitam o estado "limpo" do relatedSelect,
+                  // é melhor chamar updateMealFields para ele também.
+                  updateMealFields(relatedSelect); // Garante que os campos alvos fiquem zerados/limpos
+              }
+
+              // Atualiza os campos de calorias e detalhes com base na seleção atual
+              updateMealFields(this);
+          });
+      });
+  </script>
+
+</div> <%# Fecha o contêiner daily-food-log-form %>
+
+</body>
+</html>

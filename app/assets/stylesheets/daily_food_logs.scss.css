@@ -1,0 +1,107 @@
+/* app/assets/stylesheets/daily_food_logs.css ou .scss */
+
+/* Estilo geral do formulário */
+.daily-food-log-form { /* Adicione esta classe à tag form no ERB */
+    max-width: 600px; /* Limita a largura para melhor legibilidade */
+    margin: 20px auto; /* Centraliza o formulário na página */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para cada grupo de campo (label + input/textarea) */
+.daily-food-log-form .field {
+    margin-bottom: 15px;
+}
+
+/* Estilo para os labels */
+.daily-food-log-form label {
+    display: block; /* Faz o label ocupar sua própria linha */
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Estilo para inputs de texto, data e number, e textareas */
+.daily-food-log-form input[type="text"],
+.daily-food-log-form input[type="date"],
+.daily-food-log-form input[type="number"],
+.daily-food-log-form textarea {
+    width: 100%; /* Ocupa toda a largura disponível dentro do contêiner */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Inclui padding e border no cálculo da largura */
+    font-size: 1em;
+}
+
+.daily-food-log-form textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+}
+
+/* Estilo para os títulos das refeições */
+.daily-food-log-form h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* Estilo para a linha separadora */
+.daily-food-log-form hr {
+    border: none;
+    height: 1px;
+    background-color: #eee;
+    margin: 20px 0;
+}
+
+/* Estilo para o contêiner do botão de submissão */
+.daily-food-log-form .actions {
+    margin-top: 20px;
+    text-align: center; /* Centraliza o botão */
+}
+
+/* Estilo para o botão de submissão */
+.daily-food-log-form input[type="submit"] {
+    background-color: #5cb85c; /* Cor verde */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transição suave na cor */
+}
+
+/* Efeito hover no botão */
+.daily-food-log-form input[type="submit"]:hover {
+    background-color: #4cae4c; /* Um verde um pouco mais escuro no hover */
+}
+
+/* Estilo para a caixa de erros */
+#error_explanation {
+    background-color: #fdd; /* Rosa claro */
+    color: #a94442; /* Vermelho escuro */
+    border: 1px solid #fbc2c4;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+#error_explanation h2 {
+    margin-top: 0;
+    color: #a94442;
+    font-size: 1.2em;
+}
+
+#error_explanation ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+#error_explanation li {
+    margin-bottom: 5px;
+}

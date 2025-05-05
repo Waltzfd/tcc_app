@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Usuário</title>
+  <style>
+      body {
+          font-family: sans-serif;
+          background-color: #f4f4f4;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+      }
+
+      .container {
+          background-color: #fff;
+          padding: 40px;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          width: 300px; /* Ajustei a largura para o formulário */
+          text-align: center;
+      }
+
+      h1 {
+          color: #333;
+          margin-bottom: 30px;
+      }
+
+      .form-group {
+          margin-bottom: 15px;
+          text-align: left; /* Alinhar labels à esquerda */
+      }
+
+      label {
+          display: block;
+          margin-bottom: 5px;
+          color: #555;
+          font-weight: bold;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+          width: calc(100% - 12px);
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+
+      button[type="submit"] {
+          background-color: #007bff; /* Cor do botão da home */
+          color: white;
+          padding: 12px 24px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 18px;
+          width: 100%;
+          margin-top: 20px; /* Espaçamento do botão */
+      }
+
+      button[type="submit"]:hover {
+          background-color: #0056b3; /* Hover do botão da home */
+      }
+
+      .error-message {
+          color: red;
+          font-size: 0.9em;
+          margin-top: 5px;
+      }
+
+      .back-link {
+          display: block;
+          margin-top: 20px;
+          text-align: center;
+          color: #555;
+          text-decoration: none;
+      }
+
+      .back-link:hover {
+          text-decoration: underline;
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Cadastro de Usuário</h1>
+
+  <%= form_for(@user, url: users_path) do |f| %>
+    <div class="form-group">
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+      <% if @user.errors.include?(:name) %>
+        <div class="error-message"><%= @user.errors.full_messages_for(:name).first %></div>
+      <% end %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :email %>
+      <%= f.email_field :email %>
+      <% if @user.errors.include?(:email) %>
+        <div class="error-message"><%= @user.errors.full_messages_for(:email).first %></div>
+      <% end %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+      <% if @user.errors.include?(:password) %>
+        <div class="error-message"><%= @user.errors.full_messages_for(:password).first %></div>
+      <% end %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :password_confirmation %>
+      <%= f.password_field :password_confirmation %>
+      <% if @user.errors.include?(:password_confirmation) %>
+        <div class="error-message"><%= @user.errors.full_messages_for(:password_confirmation).first %></div>
+      <% end %>
+    </div>
+
+    <div>
+      <button type="submit">Cadastrar</button>
+    </div>
+  <% end %>
+
+  <%= link_to 'Voltar', root_path, class: 'back-link' %>
+</div>
+</body>
+</html>

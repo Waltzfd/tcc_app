@@ -1,0 +1,65 @@
+/* app/assets/stylesheets/flash_messages.css */
+
+/* Contêiner flutuante no canto superior direito */
+#flash-messages-container {
+    position: fixed; /* Fixo na tela, não rola com o conteúdo */
+    top: 20px; /* Distância do topo */
+    right: 20px; /* Distância da direita */
+    z-index: 1050; /* Garante que fique acima da maioria dos outros elementos */
+    max-width: 350px; /* Largura máxima */
+    /* Opcional: Estilo inicial oculto se você for mostrar com JS */
+    /* opacity: 0; */
+    /* transition: opacity 0.3s ease-in-out; */
+}
+
+/* Estilo básico para cada mensagem flash */
+.flash-message {
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 5px;
+    color: #fff; /* Cor do texto */
+    position: relative; /* Para posicionar o botão de fechar */
+    /* Opcional: Animação inicial */
+    /* animation: slideInFromRight 0.5s ease-out; */
+}
+
+/* Estilos para diferentes tipos de mensagem */
+.flash-message-success {
+    background-color: #28a745; /* Verde para sucesso */
+    border-color: #28a745;
+}
+
+.flash-message-alert,
+.flash-message-error { /* Use 'alert' ou 'error' no flash hash */
+    background-color: #dc3545; /* Vermelho para erro/alerta */
+    border-color: #dc3545;
+}
+
+.flash-message-notice {
+    background-color: #007bff; /* Azul para aviso */
+    border-color: #007bff;
+}
+
+/* Estilo para o botão de fechar (opcional) */
+.flash-message .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.flash-message .close-btn:hover {
+    color: #fff;
+}
+
+/* Opcional: Keyframes para animação (se descomentado no .flash-message) */
+/*
+@keyframes slideInFromRight {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+*/

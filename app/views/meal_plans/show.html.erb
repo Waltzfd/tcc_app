@@ -1,0 +1,84 @@
+<%# app/views/meal_plans/show.html.erb %>
+
+<h1>Plano de Alimentação para <%= @meal_plan.date.strftime("%d/%m/%Y") if @meal_plan&.date %></h1>
+
+<% total_calories_plan = @meal_plan.total_calories if @meal_plan&.respond_to?(:total_calories) %>
+<h2>Resumo Calórico do Dia: <%= total_calories_plan || 0 %> kcal</h2>
+
+<div class="meal-plan-container"> <%# Container principal para aplicar estilos de layout geral se necessário %>
+  <% @meal_plan.meals.order(:meal_type).each do |meal| %>
+    <%# Início do bloco de uma refeição, estilizado como um "card" %>
+    <div class="meal-block card"> <%# Classes para estilização: 'meal-block' para a estrutura, 'card' para estilo de container %>
+      <% meal_total_calories = meal.total_calories if meal.respond_to?(:total_calories) %>
+      <div class="meal-header">
+        <%# Assumindo que o seu modelo Meal tem um atributo 'time' (ex: do tipo time ou datetime) %>
+        <% meal_time = meal.time&.strftime('%H:%M') %> <%# Formata a hora da refeição %>
+        <h3><%= "#{meal_time} - #{meal.meal_type.humanize}" %></h3> <%# Exibe hora e tipo da refeição %>
+        <%# Opcional: Exibir calorias da refeição no cabeçalho %>
+        <%# <span class="meal-calories"><%= meal_total_calories || 0 %> kcal</span> %>
+        <%# Ícone para possível funcionalidade de expandir/recolher, se desejar %>
+        <%# <i class="fa fa-chevron-down expand-icon"></i> %> <%# Exemplo usando Font Awesome %>
+      </div>
+
+      <div class="meal-items">
+        <%# Exibe os itens da refeição (Receitas ou Ingredientes Individuais) %>
+
+        <%# Receitas - Estrutura simplificada se não tiver RecipeIngredient com quantidade %>
+        <% meal.recipes.each do |recipe| %>
+          <div class="meal-item">
+            <div class="item-details">
+              <h4><%= recipe.name %></h4>
+              <%# Se sua Recipe tiver um campo de descrição ou outro detalhe %>
+              <%# <p><%= recipe.description %></p> %>
+              <%# Se a associação MealRecipe tiver quantidade e unidade para a receita %>
+              <%# meal_recipe = meal.meal_recipes.find_by(recipe: recipe) # Precisa dessa associação %>
+              <%# <p><%= meal_recipe.quantity %> <%= meal_recipe.unit %></p> %>
+              <p>Detalhes da receita...</p> <%# Placeholder ou remova se não houver detalhe aqui %>
+            </div>
+            <button class="substitution-button">Ver opções de substituição</button>
+          </div>
+        <% end %>
+
+        <%# Ingredientes Individuais (MealIngredients) %>
+        <% meal.meal_ingredients.each do |meal_ingredient| %>
+          <div class="meal-item">
+            <div class="item-details">
+              <h4><%= meal_ingredient.ingredient.name %></h4>
+              <%# Assumindo que o modelo Ingredient tem um atributo 'unit' (string) %>
+              <p><%= meal_ingredient.quantity %> <%= meal_ingredient.ingredient.unit %></p>
+              <%# Opcional: Exibir calorias individuais do item %>
+              <%# <span class="item-calories">(<%= meal_ingredient.total_calories || 0 %> kcal)</span> %>
+            </div>
+            <button class="substitution-button">Ver opções de substituição</button>
+          </div>
+        <% end %>
+
+        <%# Exibe descrição simples se não houver itens estruturados %>
+        <% if meal.recipes.empty? && meal.meal_ingredients.empty? && meal.description.present? %>
+          <div class="meal-item">
+            <div class="item-details">
+              <p><%= meal.description %></p>
+            </div>
+            <%# O botão de substituição talvez não se aplique aqui, remova se for o caso %>
+            <%# <button class="substitution-button">Ver opções de substituição</button> %>
+          </div>
+        <% end %>
+
+        <%# Mensagem se a refeição estiver vazia %>
+        <% unless meal.recipes.any? || meal.meal_ingredients.any? || meal.description.present? %>
+          <div class="meal-item">
+            <div class="item-details">
+              <p>Nenhum item registrado para esta refeição.</p>
+            </div>
+          </div>
+        <% end %>
+
+      </div> <%# Fecha meal-items %>
+    </div> <%# Fecha meal-block %>
+  <% end %>
+</div> <%# Fecha meal-plan-container %>
+
+<%# Links de ação (opcionais) %>
+<%#= link_to 'Editar Plano', edit_meal_plan_path(@meal_plan) %>
+<%#= link_to 'Adicionar Refeição', new_meal_path(meal_plan_id: @meal_plan.id) %>
+<%#= link_to 'Voltar para Planos', meal_plans_path %>
